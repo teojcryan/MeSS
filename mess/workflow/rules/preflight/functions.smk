@@ -142,13 +142,13 @@ def get_asm_summary(wildcards):
     return table
 
 
-def is_circular():
+def is_circular(auto_detect_circular=False):
     if os.path.isfile(INPUT):
         files = [INPUT]
     else:
         files = glob.glob(f"{INPUT}/*.tsv")
     df = pd.concat([pd.read_csv(file, sep="\t") for file in files])
-    if ROTATE > 1 or "rotate" in df.columns or AUTO_DETECT_CIRCULAR:
+    if ROTATE > 1 or "rotate" in df.columns or auto_detect_circular:
         return True
     else:
         return False

@@ -81,9 +81,8 @@ include: os.path.join("rules", "processing", "coverages.smk")
 
 # fasta processing options
 ROTATE = config.args.rotate
-CIRCULAR = is_circular()
 AUTO_DETECT_CIRCULAR = config.args.auto_detect_circular
-
+CIRCULAR = is_circular(AUTO_DETECT_CIRCULAR)
 
 include: os.path.join("rules", "processing", "fastas.smk")
 
