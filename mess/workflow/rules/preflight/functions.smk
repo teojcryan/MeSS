@@ -148,7 +148,7 @@ def is_circular():
     else:
         files = glob.glob(f"{INPUT}/*.tsv")
     df = pd.concat([pd.read_csv(file, sep="\t") for file in files])
-    if ROTATE > 1 or "rotate" in df.columns:
+    if ROTATE > 1 or "rotate" in df.columns or AUTO_DETECT_CIRCULAR:
         return True
     else:
         return False

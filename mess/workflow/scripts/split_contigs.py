@@ -3,6 +3,7 @@ import pandas as pd
 import os
 from itertools import chain
 import random
+import re
 
 
 def get_random_start(seed, contig_length, n):
@@ -37,8 +38,28 @@ cols = ["samplename", "fasta", "contig", "contig_length", "tax_id", "seed", "cov
 
 if snakemake.params.circular:
     cols += ["n", "random_start", "rotate"]
+
     if "rotate" not in df.columns:
         df.loc[:, "rotate"] = [snakemake.params.rotate] * len(df)
+
+    # Apply pattern-based rules if auto-detect is enabled
+    if hasattr(snakemake.params, 'auto_detect_circular') and snakemake.params.auto_detect_circular:
+        # Pattern for circular contigs (plasmid, chromosome, or ptg/utg ending with 'c')
+        circular_pattern = re.compile(r'(plasmid|chromosome|[up]tg\d+c)', re.IGNORECASE)
+        # Pattern for explicitly linear contigs
+        linear_pattern = re.compile(r'[up]tg\d+l', re.IGNORECASE)
+        
+        # Process all contigs
+        for idx, row in df.iterrows():
+            contig_name = row["contig"]
+            
+            # Force linear for anything with 'l' suffix pattern regardless of other settings
+            if linear_pattern.search(contig_name):
+                df.loc[idx, "rotate"] = 1
+            # Apply circular pattern only if not already matched as linear
+            elif not circular_pattern.search(contig_name):
+                df.loc[idx, "rotate"] = 1
+                
     df["random_start"] = df.apply(
         lambda row: get_random_start(row["seed"], row["contig_length"], row["rotate"]),
         axis=1,

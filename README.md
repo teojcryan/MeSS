@@ -13,6 +13,36 @@
 [![DOI](https://zenodo.org/badge/195021481.svg)](https://zenodo.org/badge/latestdoi/195021481)
 [![paper](https://img.shields.io/badge/paper-Bioinformatics-%23167da4)](https://doi.org/10.1093/bioinformatics/btae760)
 
+<details>
+<summary><strong>🔀 About This Fork</strong> <img alt="custom fork" src="https://img.shields.io/badge/fork-custom-blue?style=flat-square"></summary>
+
+This fork of [`MeSS`](https://github.com/metagenlab/MeSS) introduces a custom feature for enhanced support of circular contig detection from local multi-fasta files.
+
+### ✨ Key Additions
+
+- `--auto-detect-circular` CLI flag: Automatically detects circular contigs using naming conventions
+- Pattern-based classification:
+  - Names like `plasmid`, `chromosome`, or ending in `c` (e.g., `ptg123c`) are treated as circular
+  - Names ending in `l` (e.g., `ptg123l`) are explicitly treated as linear
+- Integrated into Snakemake pipeline
+  - The flag propagates through preflight, simulation, and `split_contigs.py`
+  - Backward-compatible with `rotate` values and FASTA-level annotations
+- Improved logic to apply rotation only when needed
+- Adjusts coverage simulation based on rotation for circular contigs
+
+### ⚙️ Intended Use
+
+This fork is intended for workflows that:
+- Simulate mixed circular and linear genomes
+- Need automatic topology detection without manual annotation
+- Follow consistent contig naming conventions
+
+Unless the `--auto-detect-circular` flag is set, the original behavior is preserved.
+
+> This fork is maintained independently and includes custom features not present in the upstream `MeSS` repository.
+
+</details>
+
 The Metagenomic Sequence Simulator (MeSS) is a [Snakemake](https://github.com/snakemake/snakemake) pipeline, implemented using [Snaketool](https://github.com/beardymcjohnface/Snaketool), for simulating illumina, Oxford Nanopore (ONT) and Pacific Bioscience (PacBio) shotgun metagenomic samples.
 
 ## :mag: Overview

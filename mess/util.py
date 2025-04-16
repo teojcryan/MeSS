@@ -233,6 +233,13 @@ def sim_options(func):
             show_default=True,
         ),
         click.option(
+            "--auto-detect-circular",
+            help="Auto-detect circular contigs based on naming patterns",
+            is_flag=True,
+            default=False,
+            show_default=True,
+        ),
+        click.option(
             "--tech",
             help="Sequencing technology",
             type=click.Choice(["illumina", "pacbio", "nanopore"], case_sensitive=False),

@@ -56,6 +56,7 @@ cmd_sim_options = (
             "--tech",
             "--bases",
             "--rotate",
+            "--auto-detect-circular",
             "--tool",
             "--error",
             "--mean-len",

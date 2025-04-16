@@ -53,6 +53,7 @@ checkpoint split_contigs:
     params:
         circular=CIRCULAR,
         rotate=ROTATE,
+        auto_detect_circular=AUTO_DETECT_CIRCULAR,
     resources:
         mem_mb=config.resources.sml.mem,
         mem=str(config.resources.sml.mem) + "MB",
@@ -72,6 +73,7 @@ if CIRCULAR:
             ),
         params:
             lambda wildcards: get_value("random_start", wildcards),
+            rotate=lambda wildcards: get_value("rotate", wildcards),
         log:
             os.path.join(
                 dir.out.logs,
@@ -91,6 +93,11 @@ if CIRCULAR:
             containers.seqkit
         shell:
             """
-            seqkit restart -i {params} {input} | \\
-            seqkit replace -p .+ -r {wildcards.contig}_{wildcards.n} > {output}
+            if [ {params.rotate} -gt 1 ]; then
+                seqkit restart -i {params[0]} {input} | \
+                seqkit replace -p .+ -r {wildcards.contig}_{wildcards.n} > {output}
+            else
+                # For linear contigs, just rename without rotation
+                cat {input} | seqkit replace -p .+ -r {wildcards.contig}_{wildcards.n} > {output}
+            fi
             """
