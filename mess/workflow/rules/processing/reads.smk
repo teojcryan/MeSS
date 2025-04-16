@@ -365,7 +365,18 @@ rule cat_fastqs:
         "Concatenating {wildcards.sample} reads : {params.head} ... "
     shell:
         """
-        find {params.dir} -name "{params.name}" | xargs cat > {output}
+        (
+        for f in {input}; do
+            # Get fasta name from path
+            fasta=$(basename $(dirname $f))
+            
+            # Process headers with awk and output directly
+            zcat $f | awk -v fasta=$fasta '
+            NR % 4 == 1 {{ print "@" fasta ":" substr($0, 2); next; }}
+            {{ print $0; }}
+            '
+        done
+        ) | gzip > {output}
         """
 
 
